@@ -24,6 +24,7 @@ public class WhacAMole {
     Timer setPlantTimer;
 
     int score = 0;
+    boolean isGameOver = false;
 
     WhacAMole() {
         frame.setSize(boardWidth, boardHeight);
@@ -65,7 +66,8 @@ public class WhacAMole {
 
                         textLabel.setText("Score: " + Integer.toString(score));
                     } else if (tile == currentPlant) {
-		                textLabel.setText("Game Over: " + Integer.toString(score));
+                        textLabel.setFont(new Font("Arial", Font.PLAIN, 25));
+                        textLabel.setText("<html>Oops! You hit a plant. Game Over. <br>Score: " + Integer.toString(score) + ", click me to restart.</html>");
 
                         setMoleTimer.stop();
                         setPlantTimer.stop();
@@ -73,10 +75,31 @@ public class WhacAMole {
                         for (int i = 0; i < 9; i++) {
                             board[i].setEnabled(false);
                         }
+
+                        isGameOver = true;
                     }
                 }
             });
         }
+
+        textPanel.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (isGameOver) {
+                    isGameOver = false;
+                    
+                    score = 0;
+                    textLabel.setFont(new Font("Arial", Font.PLAIN, 50));
+                    textLabel.setText("Score: " + Integer.toString(score));
+
+                    setMoleTimer.start();
+                    setPlantTimer.start();
+
+                    for (int i = 0; i < 9; i++) {
+                        board[i].setEnabled(true);
+                    }
+                }
+            }
+        });
 
         setMoleTimer = new Timer(600, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
