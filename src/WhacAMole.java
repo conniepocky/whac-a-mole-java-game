@@ -67,7 +67,7 @@ public class WhacAMole {
                         textLabel.setText("Score: " + Integer.toString(score));
                     } else if (tile == currentPlant) {
                         textLabel.setFont(new Font("Arial", Font.PLAIN, 25));
-                        textLabel.setText("<html>Oops! You hit a plant. Game Over. <br>Score: " + Integer.toString(score) + ", click me to restart.</html>");
+                        textLabel.setText("<html>Oops! You hit a plant. Game Over. <br>Score: " + Integer.toString(score) + ", click anywhere to restart.</html>");
 
                         setMoleTimer.stop();
                         setPlantTimer.stop();
@@ -82,26 +82,16 @@ public class WhacAMole {
             });
         }
 
-        textPanel.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                if (isGameOver) {
-                    isGameOver = false;
-                    
-                    score = 0;
-                    textLabel.setFont(new Font("Arial", Font.PLAIN, 50));
-                    textLabel.setText("Score: " + Integer.toString(score));
-
-                    setMoleTimer.start();
-                    setPlantTimer.start();
-
-                    for (int i = 0; i < 9; i++) {
-                        board[i].setEnabled(true);
-                    }
+        Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
+            if (event instanceof MouseEvent) {
+                MouseEvent mouseEvent = (MouseEvent) event;
+                if (mouseEvent.getID() == MouseEvent.MOUSE_CLICKED) {
+                    handleMouseClick();
                 }
             }
-        });
+        }, AWTEvent.MOUSE_EVENT_MASK);
 
-        setMoleTimer = new Timer(600, new ActionListener() {
+        setMoleTimer = new Timer(800, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (currentMole != null) {
                     currentMole.setIcon(null);
@@ -136,6 +126,7 @@ public class WhacAMole {
 
                 currentPlant = tile;
                 currentPlant.setIcon(plantIcon);
+
             }
         });
 
@@ -143,5 +134,22 @@ public class WhacAMole {
         setPlantTimer.start();
 
         frame.setVisible(true);
+    }
+
+    private void handleMouseClick() {
+        if (isGameOver) {
+            isGameOver = false;
+
+            score = 0;
+            textLabel.setFont(new Font("Arial", Font.PLAIN, 50));
+            textLabel.setText("Score: " + score);
+
+            setMoleTimer.start();
+            setPlantTimer.start();
+
+            for (int i = 0; i < 9; i++) {
+                board[i].setEnabled(true);
+            }
+        }
     }
 }
